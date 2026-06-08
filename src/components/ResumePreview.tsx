@@ -6,7 +6,7 @@
 import React, { useRef } from "react";
 import { ResumeData, ResumeTemplate } from "../types";
 import { Download, Printer, Award, BookOpen, Briefcase, Code, MapPin, Mail, Phone, Globe, Linkedin, CheckSquare } from "lucide-react";
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 
 interface ResumePreviewProps {
@@ -52,37 +52,55 @@ export default function ResumePreview({
     if (!containerRef.current) return;
     if (onDownloadStart) onDownloadStart();
 
+    const element = containerRef.current;
+    
+    // Backup current layout values to restore them after capture
+    const originalWidth = element.style.width;
+    const originalMinWidth = element.style.minWidth;
+    const originalMaxWidth = element.style.maxWidth;
+    const originalClassName = element.className;
+
     try {
-      const element = containerRef.current;
+      // Force uniform desktop width (800px matches standard desktop template design)
+      // This prevents the PDF layout from collapsing to a single mobile column when printed inside a narrow iframe or on mobile browsers
+      element.style.width = "800px";
+      element.style.minWidth = "800px";
+      element.style.maxWidth = "800px";
       
-      // Use standard settings for high quality rendering
-      const scale = 2; // Increase scale for high definition print
+      // Let the browser reflow styles
+      await new Promise((resolve) => setTimeout(resolve, 150));
+      
+      // Render elements on the canvas
       const canvas = await html2canvas(element, {
-        scale: scale,
+        scale: 2, // Enhance resolution for crisp printing
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
+        scrollX: 0,
+        scrollY: 0, // Fix offset issues when html2canvas is run while window is scrolled
+        windowWidth: 800, // Fix responsive viewport size issues
       });
 
-      const imgData = canvas.toDataURL("image/jpeg", 0.95);
+      const imgData = canvas.toDataURL("image/png");
       
-      // Calculate layout matching standard A4 dimensions
+      // Set A4 parameters (A4 is 210mm x 297mm)
       const pdf = new jsPDF("p", "mm", "a4");
-      const imgWidth = 210; // A4 standard width in mm
-      const pageHeight = 297; // A4 standard height in mm
+      const imgWidth = 210;
+      const pageHeight = 297;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       
       let heightLeft = imgHeight;
       let position = 0;
 
-      pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+      // Draw first page
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
 
-      // Handle multi-page generation seamlessly
+      // Wrap other pages seamlessly
       while (heightLeft > 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
-        pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
       }
 
@@ -102,6 +120,12 @@ export default function ResumePreview({
     } catch (error) {
       console.error("PDF Export Error:", error);
     } finally {
+      // Safely restore original view values for the viewer frame layout
+      element.style.width = originalWidth;
+      element.style.minWidth = originalMinWidth;
+      element.style.maxWidth = originalMaxWidth;
+      element.className = originalClassName;
+
       if (onDownloadEnd) onDownloadEnd();
     }
   };

@@ -17,7 +17,7 @@ const PORT = Number(process.env.PORT) || 3000;
 // CONFIG
 // ========================
 
-const GEMINI_ENABLED = false; // 🔥 prevents quota burn (ENABLE ONLY WHEN NEEDED)
+
 
 let aiClient: any = null;
 
@@ -217,11 +217,7 @@ app.post("/api/translate", async (req, res) => {
 
 app.post("/api/resume/generate", async (req, res) => {
   try {
-    if (!GEMINI_ENABLED) {
-      return res.status(503).json({
-        error: "Gemini disabled to prevent quota exhaustion",
-      });
-    }
+    
 
     const { input } = req.body;
     const ai = await getGeminiClient();
@@ -243,11 +239,7 @@ app.post("/api/resume/generate", async (req, res) => {
 
 app.post("/api/resume/ats", async (req, res) => {
   try {
-    if (!GEMINI_ENABLED) {
-      return res.status(503).json({
-        error: "Gemini disabled",
-      });
-    }
+    
 
     const { resumeData } = req.body;
     const ai = await getGeminiClient();

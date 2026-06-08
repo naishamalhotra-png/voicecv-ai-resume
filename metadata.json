@@ -1,0 +1,6 @@
+{
+  "name": "VoiceCV AI",
+  "description": "VoiceCV AI is an intelligent multilingual resume builder that lets users create professional, ATS-friendly resumes using voice or text in regional languages.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

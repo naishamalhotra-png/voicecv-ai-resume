@@ -79,6 +79,7 @@ export default function ResumePreview({
         scrollX: 0,
         scrollY: 0, // Fix offset issues when html2canvas is run while window is scrolled
         windowWidth: 800, // Fix responsive viewport size issues
+        foreignObjectRendering: true,
       });
 
       const imgData = canvas.toDataURL("image/png");

@@ -235,7 +235,7 @@ app.post("/api/speech/synthesize", async (req, res) => {
       body: JSON.stringify({
         inputs: [text],
         target_language_code: languageCode || "hi-IN",
-        speaker: speaker || "meera",
+        speaker: speaker || "anushka",
         pitch: 0,
         pace: 1.0,
         loudness: 1.5,

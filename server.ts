@@ -296,7 +296,10 @@ app.post("/api/resume/generate", async (req, res) => {
 
     const prompt = `
 You are a professional resume writer and ATS optimization expert.
-
+IMPORTANT: 
+Generate the Entire Resume ONLY IN ENGLISH.
+All fields, descriptions, summaries, skills, projects, and experience entries must be written in professional English Language, regardless of the input language.
+Do not return Hindi, Marathi, Tamil, Telugu or any other regional language. 
 Extract and enhance the following information from this input into a structured JSON resume.
 
 INPUT:

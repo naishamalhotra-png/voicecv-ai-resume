@@ -29,7 +29,14 @@ async function getGeminiClient() {
       key?.slice(0, 10)
     );
     if (!key) throw new Error("GEMINI_API_KEY environment variable is required");
-    aiClient = new GoogleGenAI({ apiKey: key });
+    aiClient = new GoogleGenAI({
+      apiKey: key,
+      httpOptions: {
+        headers: {
+          "User-Agent": "aistudio-build",
+        },
+      },
+    });
   }
   return aiClient;
 }
@@ -38,10 +45,10 @@ async function getGeminiClient() {
 async function geminiGenerate(prompt: string): Promise<string> {
   const ai = await getGeminiClient();
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: "gemini-3.5-flash",
     contents: [{ role: "user", parts: [{ text: prompt }] }],
   });
-  return response.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+  return response.text ?? "";
 }
 
 function cleanJSON(raw: string): string {
@@ -226,7 +233,7 @@ app.post("/api/speech/synthesize", async (req, res) => {
     const sarvamApiKey = process.env.SARVAM_API_KEY;
     if (!sarvamApiKey?.trim()) return res.status(400).json({ error: "Missing SARVAM_API_KEY" });
 
-    const response = await fetch("https://api.sarvam.ai/text-to-speech", {
+        const response = await fetch("https://api.sarvam.ai/text-to-speech", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -241,17 +248,32 @@ app.post("/api/speech/synthesize", async (req, res) => {
         loudness: 1.5,
         speech_sample_rate: 22050,
         enable_preprocessing: true,
-        model: "bulbul:v1",
+        model: "bulbul:v2",
       }),
     });
 
     if (!response.ok) {
-      const err = await response.text();
-      return res.status(response.status).json({ error: "TTS failed", details: err });
-    }
+  const err = await response.text();
+
+  console.log("SARVAM TTS ERROR:");
+  console.log(err);
+
+  return res.status(response.status).json({
+    error: err
+  });
+}
 
     const data: any = await response.json();
-    return res.json({ audio: data.audios?.[0] || null });
+
+console.log(
+  "SARVAM TTS RESPONSE:",
+  JSON.stringify(data, null, 2)
+);
+
+return res.json({
+  ...data,
+  audio: data.audios?.[0] || null,
+});
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

@@ -80,7 +80,7 @@ export default function App() {
 
   // Multilingual regional translation states
   const [selectedLang, setSelectedLang] = useState<string>(() => {
-    return localStorage.getItem("voice_cv_session_lang") || "hi-IN";
+    return localStorage.getItem("voice_cv_session_lang") || "en-IN";
   });
   const [isTranslatingLocal, setIsTranslatingLocal] = useState(false);
   const [translatedResumeData, setTranslatedResumeData] = useState<ResumeData | null>(null);

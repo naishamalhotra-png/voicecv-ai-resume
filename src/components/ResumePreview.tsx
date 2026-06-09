@@ -71,16 +71,23 @@ export default function ResumePreview({
       await new Promise((resolve) => setTimeout(resolve, 150));
       
       // Render elements on the canvas
-      const canvas = await html2canvas(element, {
-        scale: 2, // Enhance resolution for crisp printing
-        useCORS: true,
-        logging: false,
-        backgroundColor: "#ffffff",
-        scrollX: 0,
-        scrollY: 0, // Fix offset issues when html2canvas is run while window is scrolled
-        windowWidth: 800, // Fix responsive viewport size issues
-        foreignObjectRendering: true,
-      });
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      logging: false,
+      backgroundColor: "#ffffff",
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: 800,
+      windowHeight: element.scrollHeight,
+      foreignObjectRendering: false,
+    });
+    console.log(
+      "Canvas generated:",
+      canvas.width,
+      canvas.height
+    );
 
       const imgData = canvas.toDataURL("image/png");
       

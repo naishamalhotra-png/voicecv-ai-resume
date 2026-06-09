@@ -298,9 +298,28 @@ app.post("/api/resume/generate", async (req, res) => {
 You are a professional resume writer and ATS optimization expert.
 IMPORTANT: 
 Generate the Entire Resume ONLY IN ENGLISH.
-All fields, descriptions, summaries, skills, projects, and experience entries must be written in professional English Language, regardless of the input language.
+All fields, descriptions, Proffesional Summary, skills, projects, and experience entries must be written in professional English Language, regardless of the input language.
 Do not return Hindi, Marathi, Tamil, Telugu or any other regional language. 
+CRITICAL INSTRUCTION:
+
+Generate the COMPLETE resume in English only.
+
+Regardless of the language of the voice recording, transcript, extracted data, or user input:
+
+- All section titles must be in English.
+- Professional Summary must be in English.
+- Work Experience descriptions must be in English.
+- Education details must be in English.
+- Skills must be in English.
+- Projects must be in English.
+- Certifications must be in English.
+- Achievements must be in English.
+
+Do not output any Hindi, Marathi, Tamil, Telugu, Bengali, Gujarati, Punjabi, Malayalam, Kannada, or any other regional language.
+
+Translate any non-English content into professional resume-quality English before generating the final output.
 Extract and enhance the following information from this input into a structured JSON resume.
+Before returning the response, verify that every field of the resume is written entirely in English. If any field contains a non-English word or sentence, translate it into English first.
 
 INPUT:
 "${userInput}"

@@ -65,29 +65,42 @@ export default function VoiceInput({
   }, []);
 
   // Web Speech Synthesis (read regional feedback aloud)
-  const speakFeedbackAloud = (textToSpeak: string) => {
-    if (!textToSpeak) return;
-    try {
-      window.speechSynthesis.cancel(); // Stop current speak session
+const speakFeedbackAloud = async (textToSpeak: string) => {
+  if (!textToSpeak) return;
 
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      utterance.lang = selectedLang;
-      
-      // Match general voices for selected Indian accent if present
-      const voices = window.speechSynthesis.getVoices();
-      const filteredVoice = voices.find(v => v.lang.startsWith(selectedLang.split("-")[0]));
-      if (filteredVoice) utterance.voice = filteredVoice;
+  try {
+    setIsSpeaking(true);
 
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = () => setIsSpeaking(false);
+    const response = await fetch("/api/speech/synthesize", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text: textToSpeak,
+        languageCode: selectedLang,
+      }),
+    });
 
-      setIsSpeaking(true);
-      window.speechSynthesis.speak(utterance);
-    } catch (err) {
-      console.error("Speech Synthesis Error:", err);
-      setIsSpeaking(false);
+    const result = await response.json();
+
+    if (!result.audio) {
+      throw new Error("No audio returned");
     }
-  };
+
+    const audio = new Audio(
+      `data:audio/wav;base64,${result.audio}`
+    );
+
+    audio.onended = () => setIsSpeaking(false);
+
+    await audio.play();
+
+  } catch (err) {
+    console.error("TTS Error:", err);
+    setIsSpeaking(false);
+  }
+};
 
   const stopSpeakingAloud = () => {
     try {

@@ -23,6 +23,11 @@ async function getGeminiClient() {
   if (!aiClient) {
     const { GoogleGenAI } = await import("@google/genai");
     const key = process.env.GEMINI_API_KEY;
+    console.log(
+      "Gemini key loaded:",
+      !!key,
+      key?.slice(0, 10)
+    );
     if (!key) throw new Error("GEMINI_API_KEY environment variable is required");
     aiClient = new GoogleGenAI({ apiKey: key });
   }
@@ -33,7 +38,7 @@ async function getGeminiClient() {
 async function geminiGenerate(prompt: string): Promise<string> {
   const ai = await getGeminiClient();
   const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash-lite",
+    model: "gemini-2.5-flash",
     contents: [{ role: "user", parts: [{ text: prompt }] }],
   });
   return response.candidates?.[0]?.content?.parts?.[0]?.text ?? "";

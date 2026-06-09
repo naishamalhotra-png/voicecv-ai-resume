@@ -21,7 +21,6 @@ export async function downloadResumePDF(
     const canvas = await html2canvas(element, {
       scale: 2,               // high resolution
       useCORS: true,          // allow external fonts/images
-      letterRendering: true,
       backgroundColor: "#ffffff",
       logging: false,
       windowWidth: element.scrollWidth,

@@ -83,11 +83,6 @@ export default function ResumePreview({
       windowHeight: element.scrollHeight,
       foreignObjectRendering: false,
     });
-    console.log(
-      "Canvas generated:",
-      canvas.width,
-      canvas.height
-    );
 
       const imgData = canvas.toDataURL("image/png");
       

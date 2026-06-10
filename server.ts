@@ -191,7 +191,10 @@ app.post("/api/translate", async (req, res) => {
     if (!text) return res.status(400).json({ error: "Text required" });
 
     const sarvamApiKey = process.env.SARVAM_API_KEY;
-    if (!sarvamApiKey?.trim()) return res.status(400).json({ error: "Missing SARVAM_API_KEY" });
+   const isAlreadyEnglish = /^[a-zA-Z0-9\s.,!?'"-]+$/.test(text.trim());
+if (isAlreadyEnglish) {
+  return res.json({ translatedText: text });
+} if (!sarvamApiKey?.trim()) return res.status(400).json({ error: "Missing SARVAM_API_KEY" });
 
     const response = await fetch("https://api.sarvam.ai/translate", {
       method: "POST",

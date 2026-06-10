@@ -381,7 +381,7 @@ export default function App() {
       showSuccessMessage("Google Gemini AI successfully extracted resume fields!");
 
       // Auto run ATS scoring instantly to keep real-time UI updated
-      triggerATSScoring(generatedData);
+      
 
     } catch (err: any) {
       console.error(err);
@@ -524,15 +524,13 @@ export default function App() {
   };
 
   // Trigger manual score recalculated
-  useEffect(() => {
-    // Delay score update slightly to capture final typings
-    if (resumeData.personalInfo.name) {
-      const timer = setTimeout(() => {
-        triggerATSScoring(resumeData);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [resumeData]);
+useEffect(() => {
+  if (!resumeData.personalInfo.name) return;
+  const timer = setTimeout(() => {
+    triggerATSScoring(resumeData);
+  }, 10000); // wait 10 seconds of inactivity
+  return () => clearTimeout(timer);
+}, [resumeData]);
 
   // General Navbar component
   const renderNavbar = () => {

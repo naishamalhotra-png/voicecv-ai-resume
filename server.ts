@@ -45,7 +45,7 @@ async function getGeminiClient() {
 async function geminiGenerate(prompt: string): Promise<string> {
   const ai = await getGeminiClient();
   const response = await ai.models.generateContent({
-    model: "gemini-3.5-flash",
+    model: "gemini-2.0-flash",
     contents: [{ role: "user", parts: [{ text: prompt }] }],
   });
   return response.text ?? "";
